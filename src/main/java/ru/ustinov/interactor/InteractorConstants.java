@@ -11,6 +11,6 @@ final class InteractorConstants extends CommonConstants {
             String.format("\"%s\" - начать новую игру.\n", Command.PLAY) +
             String.format("\"%s\" - посмотреть это меню ещё раз.\n", Command.HELP) +
             String.format("\"%s\" - вывести наилучший рейтинг за сессию.\n", Command.RATING) +
-            String.format("\"%s\" - закончить сессию.\n", Command.QUIT);
+            String.format("\"%s\" - закончить сессию.", Command.QUIT);
 
 }
