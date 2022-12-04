@@ -14,7 +14,7 @@ public abstract class Rating {
 
     private final Map<PlayerType, Integer> blackScore = new HashMap<>();
 
-    abstract void updateScore(final Side side, final PlayerType playerType, final Integer newScore);
+    public abstract void updateScore(final Side side, final PlayerType playerType, final Integer newScore);
 
     protected Map<PlayerType, Integer> getScoreTable(Side side) {
         return side == Side.BLACK ? blackScore : whiteScore;

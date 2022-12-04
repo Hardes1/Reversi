@@ -11,7 +11,7 @@ import static java.lang.Math.max;
 public final class ReversiRating extends Rating {
 
     @Override
-    void updateScore(final Side side, final PlayerType playerType, final Integer newScore) {
+    public void updateScore(final Side side, final PlayerType playerType, final Integer newScore) {
         Map<PlayerType, Integer> scoreTable = getScoreTable(side);
         Integer updatedScore = max(newScore, scoreTable.getOrDefault(playerType, DEFAULT_SCORE));
         scoreTable.put(playerType, updatedScore);
