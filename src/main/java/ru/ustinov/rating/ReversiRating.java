@@ -25,7 +25,7 @@ public final class ReversiRating extends Rating {
         if (whiteScoreTable.isEmpty() && blackScoreTable.isEmpty()) {
             return ReversiRatingConstants.NO_GAMES_DURING_SESSION;
         }
-        return String.format(ReversiRatingConstants.RESULT, getAllScores(whiteScoreTable, Side.WHITE)) +
+        return String.format(ReversiRatingConstants.RESULT, getAllScores(whiteScoreTable, Side.WHITE)) + "\n" +
                 String.format(ReversiRatingConstants.RESULT, getAllScores(blackScoreTable, Side.BLACK));
     }
 

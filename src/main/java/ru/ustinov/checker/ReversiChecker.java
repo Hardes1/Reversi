@@ -2,7 +2,9 @@ package ru.ustinov.checker;
 
 import ru.ustinov.game.GameConstants;
 import ru.ustinov.game.Side;
+import ru.ustinov.items.BoardConstants;
 import ru.ustinov.items.Cell;
+import ru.ustinov.util.Utils;
 
 import static ru.ustinov.util.Utils.getOppositeSide;
 
@@ -51,4 +53,29 @@ public class ReversiChecker implements Checker {
         return cell.row() >= GameConstants.MINIMAL_BOARD_SIZE && cell.row() < size
                 && cell.column() >= GameConstants.MINIMAL_BOARD_SIZE && cell.column() < size;
     }
+
+    @Override
+    public boolean isCornerCell(Cell cell) {
+        boolean isBorderRow = cell.row() == BoardConstants.MINIMAL_COORDINATE || cell.row() == size - 1;
+        boolean isBorderColumn = cell.column() == BoardConstants.MINIMAL_COORDINATE || cell.column() == size - 1;
+        return isBorderColumn && isBorderRow;
+    }
+
+    @Override
+    public boolean isBorderCell(Cell cell) {
+        boolean isBorderRow = cell.row() == BoardConstants.MINIMAL_COORDINATE || cell.row() == size - 1;
+        boolean isBorderColumn = cell.column() == BoardConstants.MINIMAL_COORDINATE || cell.column() == size - 1;
+        return isBorderColumn || isBorderRow;
+    }
+
+    @Override
+    public boolean isNotNullMovement(Cell cell) {
+        return cell.row() * cell.row() + cell.column() * cell.column() > BoardConstants.MINIMAL_COORDINATE;
+    }
+
+    @Override
+    public boolean isOppositeSide(Cell cell, Side side) {
+        return table[cell.row()][cell.column()] == Utils.getOppositeSide(side);
+    }
+
 }

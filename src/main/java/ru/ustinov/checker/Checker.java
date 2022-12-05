@@ -10,4 +10,11 @@ public interface Checker {
 
     boolean isCorrectPosition(Cell cell);
 
+    boolean isCornerCell(Cell cell);
+
+    boolean isBorderCell(Cell cell);
+
+    boolean isNotNullMovement(Cell cell);
+
+    boolean isOppositeSide(Cell cell, Side side);
 }
