@@ -14,5 +14,7 @@ public interface Board {
 
     Set<Cell> getPossibleMoves(Side side);
 
-    SidesScore getScore();
+    SidesScore getSidesScore();
+
+    double getCellScore(Cell cell, Side side);
 }

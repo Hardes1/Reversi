@@ -3,11 +3,11 @@ package ru.ustinov.items;
 import ru.ustinov.checker.Checker;
 import ru.ustinov.checker.ReversiChecker;
 import ru.ustinov.game.Side;
+import ru.ustinov.score.ReversiScoreCounter;
+import ru.ustinov.score.ScoreCounter;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import static ru.ustinov.util.Utils.getOppositeSide;
 
 public class ReversiBoard implements Board {
     private final Side[][] table;
@@ -20,9 +20,12 @@ public class ReversiBoard implements Board {
 
     private final Checker checker;
 
+    private final ScoreCounter scoreCounter;
+
     public ReversiBoard(int size) {
         table = new Side[size][size];
         checker = new ReversiChecker(table, size);
+        scoreCounter = new ReversiScoreCounter(table, checker);
         this.size = size;
         movesLeft = size * size - BoardConstants.INITIAL_MOVES_USED;
         initBoardState();
@@ -47,11 +50,12 @@ public class ReversiBoard implements Board {
             System.out.println(String.join(" ", transformed));
         }
         System.out.println(BoardConstants.BOTTOM_NUMBERS);
+        SidesScore score = getSidesScore();
+        System.out.println(String.format(BoardConstants.CURRENT_SCORE, score.whiteScore(), score.blackScore()));
         System.out.println(BoardConstants.HINT);
-        System.out.println(String.format(BoardConstants.MOVE_TURN, side));
         System.out.println(BoardConstants.POSSIBLE_MOVES);
         for (Cell cell : possibleMoves) {
-            System.out.print(String.format(BoardConstants.CELL_FORMAT, cell.row(), cell.column()) + " ");
+            System.out.print(String.format(BoardConstants.CELL_FORMAT, cell.row() + 1, cell.column() + 1) + " ");
         }
         System.out.println();
     }
@@ -98,39 +102,35 @@ public class ReversiBoard implements Board {
     }
 
     @Override
-    public SidesScore getScore() {
-        int whiteScore = 0;
-        int blackScore = 0;
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
-                if (table[i][j] == Side.WHITE) {
-                    whiteScore++;
-                } else {
-                    blackScore++;
-                }
-            }
-        }
-        return new SidesScore(whiteScore, blackScore);
+    public SidesScore getSidesScore() {
+        return scoreCounter.getSidesScore();
+    }
+
+    @Override
+    public double getCellScore(Cell cell, Side side) {
+        return scoreCounter.getCellScore(cell, side);
     }
 
     private void refreshCell(Cell cell, Side current) {
         for (int di = -1; di <= 1; ++di) {
             for (int dj = -1; dj <= 1; ++dj) {
-                if (di * di + dj * dj > BoardConstants.MINIMAL_COORDINATE &&
-                        checker.isCorrectPosition(new Cell(cell.row() + di, cell.column() + dj)) &&
-                        table[cell.row() + di][cell.column() + dj] == getOppositeSide(current)) {
-                    if (checker.isPossibleToCutDirection(cell, current, di, dj)) {
-                        int deltaRow = di;
-                        int deltaColumn = dj;
-                        while (checker.isCorrectPosition(new Cell(cell.row() + deltaRow, cell.column() + deltaColumn)) &&
-                                getOppositeSide(current) == table[cell.row() + deltaRow][cell.column() + deltaColumn]) {
-                            table[cell.row() + deltaRow][cell.column() + deltaColumn] = current;
-                            deltaRow += di;
-                            deltaColumn += dj;
-                        }
+                Cell deltaCell = new Cell(di, dj);
+                Cell newCell = new Cell(cell.row() + di, cell.column() + dj);
+                if (checker.isNotNullMovement(deltaCell) &&
+                        checker.isCorrectPosition(newCell) &&
+                        checker.isOppositeSide(newCell, current) &&
+                        checker.isPossibleToCutDirection(cell, current, di, dj)) {
+                    int deltaRow = di;
+                    int deltaColumn = dj;
+                    newCell = new Cell(cell.row() + deltaRow, cell.column() + deltaColumn);
+                    while (checker.isCorrectPosition(newCell) && checker.isOppositeSide(newCell, current)) {
+                        table[cell.row() + deltaRow][cell.column() + deltaColumn] = current;
+                        deltaRow += di;
+                        deltaColumn += dj;
                     }
                 }
             }
         }
     }
 }
+
